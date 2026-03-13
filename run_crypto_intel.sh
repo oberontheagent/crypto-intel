@@ -26,4 +26,13 @@ EXIT_CODE=${PIPESTATUS[0]}
 
 echo "=== Feed Collection Finished: $(date) (exit: $EXIT_CODE) ===" | tee -a "$LOG_FILE"
 
+# Auto-commit latest condensed data to GitHub for Puck/collaborators
+if [ "$EXIT_CODE" -eq 0 ]; then
+    echo "Pushing latest data to GitHub..." | tee -a "$LOG_FILE"
+    git add data/latest-feeds-condensed.json data/latest-feeds.json 2>&1 | tee -a "$LOG_FILE" || true
+    git diff --cached --quiet || \
+        git commit -m "data: feed update $(date -u '+%Y-%m-%d %H:%M UTC')" 2>&1 | tee -a "$LOG_FILE"
+    git push origin main 2>&1 | tee -a "$LOG_FILE" || echo "Git push failed (non-fatal)" | tee -a "$LOG_FILE"
+fi
+
 exit "$EXIT_CODE"
