@@ -1,0 +1,9 @@
+*.pyc
+__pycache__/
+.venv/
+.env
+logs/*.log
+# Keep data and reports dirs but ignore large full feed files
+data/feeds-*.json
+!data/latest-feeds-condensed.json
+!data/latest-feeds.json
